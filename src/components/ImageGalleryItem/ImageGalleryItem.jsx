@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import styled from 'styled-components';
+import { nanoid } from 'nanoid';
 
 const StyledItem = styled.li`
   border-radius: 2px;
@@ -18,13 +19,24 @@ const StyledImg = styled.img`
 `;
 
 export default class ImageGalleryItem extends Component {
+  handleClick = e => {
+    e.preventDefault();
+    const dataUrl = e.currentTarget.getAttribute('data');
+    this.props.getLargeImgUrl(dataUrl);
+  };
+
   render() {
     return (
       <>
         {this.props.items.map(item => {
           return (
-            <StyledItem key={item.id}>
-              <StyledImg src={item.previewURL} alt={item.tags} />
+            <StyledItem key={nanoid()}>
+              <StyledImg
+                src={item.previewURL}
+                alt={item.tags}
+                data={item.largeImageURL}
+                onClick={this.handleClick}
+              />
             </StyledItem>
           );
         })}

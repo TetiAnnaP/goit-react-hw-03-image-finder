@@ -4,6 +4,7 @@ import { GetImages } from './Servises/servises';
 import styled, { createGlobalStyle } from 'styled-components';
 import Button from './Button/Button';
 import Loader from './Loader/Loader';
+import Modal from './Modal/Modal';
 import { Component } from 'react';
 
 const GlobalStyle = createGlobalStyle`
@@ -46,17 +47,40 @@ export default class App extends Component {
     items: [],
     value: '',
     error: '',
+    page: 1,
     visible: false,
+    showModal: false,
+    dataUrl: '',
   };
 
   getUserValue = value => {
     this.setState({ value });
   };
 
-  getNextImages = arr => {
-    this.setState(prev => ({
-      items: [...prev.items, ...arr],
+  getNextImages = () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+      visible: true,
     }));
+    const newValue = this.state.value;
+    const page = this.state.page;
+
+    GetImages(newValue, page)
+      .then(resp => {
+        this.setState(prevState => ({
+          items: [...prevState.items, ...resp.hits],
+          visible: false,
+        }));
+      })
+      .catch(error => this.setState({ error }));
+  };
+
+  getLargeImage = dataUrl => {
+    this.setState({ dataUrl, showModal: true });
+  };
+
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({ showModal: !showModal }));
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -64,7 +88,7 @@ export default class App extends Component {
 
     if (prevState.value !== newValue) {
       this.setState({ visible: true });
-      const page = 1;
+      const { page } = this.state;
       GetImages(newValue, page)
         .then(resp =>
           this.setState({
@@ -82,13 +106,14 @@ export default class App extends Component {
         <GlobalStyle />
         <Searchbar getUserValue={this.getUserValue} />
         <Loader visible={this.state.visible} />
-        <ImageGalery items={this.state.items} />
+        <ImageGalery
+          items={this.state.items}
+          getLargeImage={this.getLargeImage}
+        />
         {this.state.items.length > 0 && (
-          <Button
-            newValue={this.state.value}
-            getNextImages={this.getNextImages}
-          />
+          <Button getNextImages={this.getNextImages} />
         )}
+        {this.state.showModal && <Modal dataUrl={this.state.dataUrl} />}
       </StyledDiv>
     );
   }
