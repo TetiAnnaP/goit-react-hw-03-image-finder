@@ -3,6 +3,7 @@ import ImageGalery from './ImageGallery/ImageGallery';
 import { GetImages } from './Servises/servises';
 import styled, { createGlobalStyle } from 'styled-components';
 import Button from './Button/Button';
+import Loader from './Loader/Loader';
 import { Component } from 'react';
 
 const GlobalStyle = createGlobalStyle`
@@ -45,6 +46,7 @@ export default class App extends Component {
     items: [],
     value: '',
     error: '',
+    visible: false,
   };
 
   getUserValue = value => {
@@ -61,11 +63,13 @@ export default class App extends Component {
     const newValue = this.state.value;
 
     if (prevState.value !== newValue) {
+      this.setState({ visible: true });
       const page = 1;
       GetImages(newValue, page)
         .then(resp =>
           this.setState({
             items: resp.hits,
+            visible: false,
           })
         )
         .catch(error => this.setState({ error }));
@@ -77,6 +81,7 @@ export default class App extends Component {
       <StyledDiv>
         <GlobalStyle />
         <Searchbar getUserValue={this.getUserValue} />
+        <Loader visible={this.state.visible} />
         <ImageGalery items={this.state.items} />
         {this.state.items.length > 0 && (
           <Button
