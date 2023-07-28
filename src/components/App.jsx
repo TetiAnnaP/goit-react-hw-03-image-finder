@@ -1,6 +1,6 @@
 import Searchbar from './Searchbar/Searchbar';
 import ImageGalery from './ImageGallery/ImageGallery';
-import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
+import { GetImages } from './Servises/servises';
 import styled, { createGlobalStyle } from 'styled-components';
 import Button from './Button/Button';
 import { Component } from 'react';
@@ -51,30 +51,22 @@ export default class App extends Component {
     this.setState({ value });
   };
 
+  getNextImages = arr => {
+    this.setState(prev => ({
+      items: [...prev.items, ...arr],
+    }));
+  };
+
   componentDidUpdate(prevProps, prevState) {
     const newValue = this.state.value;
 
     if (prevState.value !== newValue) {
-      console.log('Робимо запит на сервер');
-
-      fetch(
-        `https://pixabay.com/api/?q=${newValue}&page=1&key=37406470-f77473b8e435a1e7065d6e2d2&image_type=photo&orientation=horizontal&per_page=12`
-      )
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          }
-          return Promise.reject(new Error('За цим запитом нічого немає!'));
-        })
+      const page = 1;
+      GetImages(newValue, page)
         .then(resp =>
-          this.setState(
-            {
-              items: resp.hits,
-            },
-            () => {
-              console.log(this.state);
-            }
-          )
+          this.setState({
+            items: resp.hits,
+          })
         )
         .catch(error => this.setState({ error }));
     }
@@ -85,10 +77,13 @@ export default class App extends Component {
       <StyledDiv>
         <GlobalStyle />
         <Searchbar getUserValue={this.getUserValue} />
-        <ImageGalery>
-          <ImageGalleryItem />
-        </ImageGalery>
-        <Button />
+        <ImageGalery items={this.state.items} />
+        {this.state.items.length > 0 && (
+          <Button
+            newValue={this.state.value}
+            getNextImages={this.getNextImages}
+          />
+        )}
       </StyledDiv>
     );
   }

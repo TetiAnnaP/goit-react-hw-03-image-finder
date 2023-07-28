@@ -6,7 +6,7 @@ const StyledItem = styled.li`
   box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
     0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
 `;
-const StyledImg = styled.image`
+const StyledImg = styled.img`
   width: 100%;
   height: 260px;
   object-fit: cover;
@@ -18,15 +18,17 @@ const StyledImg = styled.image`
 `;
 
 export default class ImageGalleryItem extends Component {
-  state = {
-    url: '',
-  };
-
   render() {
     return (
-      <StyledItem>
-        <StyledImg src="" alt="" />
-      </StyledItem>
+      <>
+        {this.props.items.map(item => {
+          return (
+            <StyledItem key={item.id}>
+              <StyledImg src={item.previewURL} alt={item.tags} />
+            </StyledItem>
+          );
+        })}
+      </>
     );
   }
 }

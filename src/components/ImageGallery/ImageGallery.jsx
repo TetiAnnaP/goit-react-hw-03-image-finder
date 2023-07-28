@@ -1,3 +1,4 @@
+import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 import styled from 'styled-components';
 
 const StyledUl = styled.ul`
@@ -13,10 +14,12 @@ const StyledUl = styled.ul`
   margin-right: auto;
 `;
 
-const ImageGalery = () => {
+const ImageGalery = ({ items }) => {
   return (
     <>
-      <StyledUl></StyledUl>
+      <StyledUl>
+        <ImageGalleryItem items={items} />
+      </StyledUl>
     </>
   );
 };

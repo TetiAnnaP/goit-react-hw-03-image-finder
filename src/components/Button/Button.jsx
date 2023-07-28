@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { GetImages } from '../Servises/servises';
 import styled from 'styled-components';
 
 const StyledLoadMoreBtn = styled.button`
@@ -31,9 +32,30 @@ const StyledLoadMoreBtn = styled.button`
 `;
 
 export default class Button extends Component {
-  state = {};
+  state = {
+    page: 2,
+  };
+
+  handleLoadMoreBtn = () => {
+    const { page } = this.state;
+    const { newValue } = this.props;
+
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
+
+    GetImages(newValue, page)
+      .then(resp => {
+        this.props.getNextImages(resp.hits);
+      })
+      .catch(error => this.setState({ error }));
+  };
 
   render() {
-    return <StyledLoadMoreBtn type="submit">Load more</StyledLoadMoreBtn>;
+    return (
+      <StyledLoadMoreBtn type="button" onClick={this.handleLoadMoreBtn}>
+        Load more
+      </StyledLoadMoreBtn>
+    );
   }
 }
