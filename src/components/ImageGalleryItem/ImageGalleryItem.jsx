@@ -22,7 +22,9 @@ export default class ImageGalleryItem extends Component {
   handleClick = e => {
     e.preventDefault();
     const dataUrl = e.currentTarget.getAttribute('data');
-    this.props.getLargeImgUrl(dataUrl);
+    const alt = e.currentTarget.getAttribute('alt');
+
+    this.props.getLargeImgUrl(dataUrl, alt);
   };
 
   render() {

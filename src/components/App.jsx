@@ -51,6 +51,7 @@ export default class App extends Component {
     visible: false,
     showModal: false,
     dataUrl: '',
+    alt: '',
   };
 
   getUserValue = value => {
@@ -75,8 +76,8 @@ export default class App extends Component {
       .catch(error => this.setState({ error }));
   };
 
-  getLargeImage = dataUrl => {
-    this.setState({ dataUrl, showModal: true });
+  getLargeImage = (dataUrl, alt) => {
+    this.setState({ dataUrl, alt, showModal: true });
   };
 
   toggleModal = () => {
@@ -96,7 +97,7 @@ export default class App extends Component {
             visible: false,
           })
         )
-        .catch(error => this.setState({ error }));
+        .catch(error => this.setState({ error: error.message }));
     }
   }
 
@@ -113,7 +114,13 @@ export default class App extends Component {
         {this.state.items.length > 0 && (
           <Button getNextImages={this.getNextImages} />
         )}
-        {this.state.showModal && <Modal dataUrl={this.state.dataUrl} />}
+        {this.state.showModal && (
+          <Modal
+            dataUrl={this.state.dataUrl}
+            alt={this.state.alt}
+            toggleModal={this.toggleModal}
+          />
+        )}
       </StyledDiv>
     );
   }

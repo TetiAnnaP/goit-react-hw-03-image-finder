@@ -19,11 +19,31 @@ const ModalWindow = styled.div`
 `;
 
 export default class Modal extends Component {
+  handleBackdropClick = e => {
+    if (e.target === e.currentTarget) {
+      this.props.toggleModal();
+    }
+  };
+
+  handleKeyDown = e => {
+    if (e.code === 'Escape') {
+      this.props.toggleModal();
+    }
+  };
+
+  componentDidMount() {
+    window.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.handleKeyDown);
+  }
+
   render() {
     return (
-      <BackDrop>
+      <BackDrop onClick={this.handleBackdropClick}>
         <ModalWindow>
-          <img src={this.props.dataUrl} />
+          <img src={this.props.dataUrl} alt={this.props.alt} />
         </ModalWindow>
       </BackDrop>
     );

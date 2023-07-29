@@ -16,8 +16,8 @@ const StyledUl = styled.ul`
 `;
 
 export default class ImageGalery extends Component {
-  getLargeImgUrl = dataUrl => {
-    this.props.getLargeImage(dataUrl);
+  getLargeImgUrl = (dataUrl, alt) => {
+    this.props.getLargeImage(dataUrl, alt);
   };
 
   render() {
